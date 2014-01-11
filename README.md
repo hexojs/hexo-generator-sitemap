@@ -1,28 +1,16 @@
-# [Hexo] Plugins
+# Sitemap generator
 
-Official plugins for [Hexo].
+Generate sitemap.
 
-- [Plugin List](https://github.com/tommy351/hexo/wiki/Plugins)
-- [Plugin development](http://zespia.tw/hexo/docs/plugins.html)
+## Options
 
-## Usage
+You can configure this plugin in `_config.yml`.
 
-### Install
-
-```
-npm install <plugin-name> --save
+``` yaml
+sitemap:
+    path: sitemap.xml
 ```
 
-### Update
-
-```
-npm update
-```
-
-### Uninstall
-
-```
-npm uninstall <plugin-name>
-```
+- **path** - Sitemap path. (Default: sitemap.xml)
 
 [Hexo]: http://zespia.tw/hexo

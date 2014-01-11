@@ -1,13 +1,16 @@
 {
-  "name": "hexo-generator-feed",
+  "name": "hexo-generator-sitemap",
   "version": "0.1.0",
-  "description": "Feed generator plugin for Hexo",
+  "description": "Sitemap generator plugin for Hexo",
   "main": "index",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tommy351/hexo-plugins.git"
+    "url": "https://github.com/hexojs/hexo-generator-sitemap.git"
   },
-  "keywords": ["hexo", "rss", "feed", "atom"],
+  "bugs": {
+    "url": "https://github.com/hexojs/hexo-generator-sitemap/issues"
+  },
+  "keywords": ["hexo", "sitemap", "seo"],
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
   "license": {
     "type": "MIT",
