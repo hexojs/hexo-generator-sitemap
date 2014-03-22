@@ -17,9 +17,13 @@ hexo.extend.generator.register(function(locals, render, callback){
     sitemapConfig.path += '.xml';
   }
 
-  var posts = [].concat(locals.posts.toArray(), locals.pages.toArray()).sort(function(a, b){
-    return b.updated - a.updated;
-  });
+  var posts = [].concat(locals.posts.toArray(), locals.pages.toArray())
+    .filter(function(item){
+      return item.sitemap !== false;
+    })
+    .sort(function(a, b){
+      return b.updated - a.updated;
+    });
 
   var xml = sitemapTmpl({
     config: config,
