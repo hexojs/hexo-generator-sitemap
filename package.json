@@ -1,6 +1,6 @@
 {
   "name": "hexo-generator-sitemap",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sitemap generator plugin for Hexo",
   "main": "index",
   "repository": {
@@ -10,14 +10,19 @@
   "bugs": {
     "url": "https://github.com/hexojs/hexo-generator-sitemap/issues"
   },
-  "keywords": ["hexo", "sitemap", "seo"],
+  "keywords": [
+    "hexo",
+    "sitemap",
+    "seo",
+    "generator"
+  ],
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
   "license": {
     "type": "MIT",
     "url": "https://raw.github.com/tommy351/hexo/master/LICENSE"
   },
   "dependencies": {
-    "ejs": "0.8.5",
-    "lodash": "2.4.1"
+    "ejs": "^0.8.5",
+    "lodash": "^2.4.1"
   }
 }
