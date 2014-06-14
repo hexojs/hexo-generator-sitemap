@@ -4,7 +4,7 @@ Generate sitemap.
 
 ## Install
 
-```
+``` bash
 $ npm install hexo-generator-sitemap --save
 ```
 
@@ -18,5 +18,3 @@ sitemap:
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
-
-[Hexo]: http://zespia.tw/hexo

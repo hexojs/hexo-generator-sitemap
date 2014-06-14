@@ -1,5 +1,5 @@
 var ejs = require('ejs'),
-  _ = require('lodash'),
+  merge = require('utils-merge'),
   path = require('path'),
   file = hexo.util.file2;
 
@@ -9,7 +9,7 @@ var sitemapSrc = path.join(__dirname, 'sitemap.ejs'),
 hexo.extend.generator.register(function(locals, render, callback){
   var config = hexo.config;
 
-  var sitemapConfig = _.extend({
+  var sitemapConfig = merge({
     path: 'sitemap.xml'
   }, config.sitemap);
 
