@@ -4,6 +4,22 @@
   <url>
     <loc><%- encodeURI(post.permalink) %></loc>
     <lastmod><%= post.updated.toDate().toISOString() || post.date.toDate().toISOString() %></lastmod>
+    <changefreq><%= sitemap.post_changefreq %></changefreq>
+    <priority><%= sitemap.post_priority %></priority>
+  </url>
+  <% }) %>
+  <% tags.forEach(function(tag){ %>
+  <url>
+    <loc><%- encodeURI(tag.permalink) %></loc>
+    <changefreq><%= sitemap.tag_changefreq %></changefreq>
+    <priority><%= sitemap.tag_priority %></priority>
+  </url>
+  <% }) %>
+  <% categories.forEach(function(category){ %>
+  <url>
+    <loc><%- encodeURI(category.permalink) %></loc>
+    <changefreq><%= sitemap.category_changefreq %></changefreq>
+    <priority><%= sitemap.category_priority %></priority>
   </url>
   <% }) %>
 </urlset>

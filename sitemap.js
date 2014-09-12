@@ -25,9 +25,30 @@ module.exports = function(locals, render, callback){
       return b.updated - a.updated;
     });
 
+  var tags = [].concat(locals.tags.toArray())
+    .filter(function(item){
+      return item.sitemap !== false;
+    })
+    .sort(function(a, b){
+      return b.updated - a.updated;
+    });
+
+  var categories = [].concat(locals.categories.toArray())
+    .filter(function(item){
+      return item.sitemap !== false;
+    })
+    .sort(function(a, b){
+      return b.updated - a.updated;
+    });
+
+  var sitemap = config.sitemap
+
   var xml = sitemapTmpl({
     config: config,
-    posts: posts
+    posts: posts,
+    tags: tags,
+    categories: categories,
+    sitemap: sitemap
   });
 
   hexo.route.set(sitemapConfig.path, xml);
