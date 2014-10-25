@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <% posts.forEach(function(post){ %>
+  <% if (typeof post.index !== "undefined" && post.index.toString().toLowerCase() === "false"){ return;}%>
   <url>
     <loc><%- encodeURI(post.permalink) %></loc>
     <lastmod><%= post.updated.toDate().toISOString() || post.date.toDate().toISOString() %></lastmod>
