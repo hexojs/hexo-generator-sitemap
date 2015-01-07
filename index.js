@@ -1,7 +1,12 @@
-var generator = hexo.extend.generator;
+var merge = require('utils-merge');
+var pathFn = require('path');
 
-if (generator.register.length === 1){
-  generator.register(require('./sitemap'));
-} else {
-  generator.register('sitemap', require('./sitemap'));
+var config = hexo.config.sitemap = merge({
+  path: 'sitemap.xml'
+}, hexo.config.sitemap);
+
+if (!pathFn.extname(config.path)){
+  config.path += '.xml';
 }
+
+hexo.extend.generator.register('sitemap', require('./lib/generator'));

@@ -3,7 +3,7 @@
   <% posts.forEach(function(post){ %>
   <url>
     <loc><%- encodeURI(post.permalink) %></loc>
-    <lastmod><%= post.updated.toDate().toISOString() || post.date.toDate().toISOString() %></lastmod>
+    <lastmod><%= post.updated.toISOString() || post.date.toISOString() %></lastmod>
   </url>
   <% }) %>
 </urlset>
