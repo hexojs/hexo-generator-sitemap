@@ -28,7 +28,7 @@ describe('Sitemap generator', function(){
       path: 'sitemap.xml'
     };
 
-    var result = generator(hexo.locals);
+    var result = generator(hexo.locals.toObject());
 
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl({
