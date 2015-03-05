@@ -10,6 +10,9 @@ Generate sitemap.
 $ npm install hexo-generator-sitemap --save
 ```
 
+- Hexo 3: 1.x
+- Hexo 2: 0.x
+
 ## Options
 
 You can configure this plugin in `_config.yml`.
