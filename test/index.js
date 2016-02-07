@@ -1,39 +1,53 @@
-var should = require('chai').should();
+'use strict';
+
+var should = require('chai').should(); // eslint-disable-line
 var Hexo = require('hexo');
-var ejs = require('ejs');
+var nunjucks = require('nunjucks');
+var env = new nunjucks.Environment();
 var pathFn = require('path');
 var fs = require('fs');
 
-var sitemapSrc = pathFn.join(__dirname, '../sitemap.ejs');
-var sitemapTmpl = ejs.compile(fs.readFileSync(sitemapSrc, 'utf8'));
+nunjucks.configure({
+  autoescape: false,
+  watch: false
+});
 
-describe('Sitemap generator', function(){
+env.addFilter('uriencode', function(str) {
+  return encodeURI(str);
+});
+
+var sitemapSrc = pathFn.join(__dirname, '../sitemap.xml');
+var sitemapTmpl = nunjucks.compile(fs.readFileSync(sitemapSrc, 'utf8'), env);
+
+describe('Sitemap generator', function() {
   var hexo = new Hexo(__dirname, {silent: true});
   var Post = hexo.model('Post');
   var generator = require('../lib/generator').bind(hexo);
   var posts;
+  var locals;
 
-  before(function(){
+  before(function() {
     return Post.insert([
       {source: 'foo', slug: 'foo', updated: 1e8},
       {source: 'bar', slug: 'bar', updated: 1e8 + 1},
       {source: 'baz', slug: 'baz', updated: 1e8 - 1}
-    ]).then(function(data){
+    ]).then(function(data) {
       posts = Post.sort('-updated');
+      locals = hexo.locals.toObject();
     });
   });
 
-  it('default', function(){
+  it('default', function() {
     hexo.config.sitemap = {
       path: 'sitemap.xml'
     };
 
-    var result = generator(hexo.locals.toObject());
+    var result = generator(locals);
 
     result.path.should.eql('sitemap.xml');
-    result.data.should.eql(sitemapTmpl({
+    result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
-      posts: posts
+      posts: posts.toArray()
     }));
   });
 });
