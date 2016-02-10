@@ -22,17 +22,19 @@
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
   "license": "MIT",
   "dependencies": {
-    "object-assign": "^4.0.1",
-    "nunjucks": "^2.3.0"
+    "minimatch": "^3.0.0",
+    "nunjucks": "^2.3.0",
+    "object-assign": "^4.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "cheerio": "^0.20.0",
     "eslint": "^1.10.3",
     "eslint-config-hexo": "^1.0.2",
     "hexo": "^3.0.0",
+    "istanbul": "^0.4.2",
     "jscs": "^2.9.0",
     "jscs-preset-hexo": "^1.0.1",
-    "mocha": "^2.4.5",
-    "istanbul": "^0.4.2"
+    "mocha": "^2.4.5"
   }
 }

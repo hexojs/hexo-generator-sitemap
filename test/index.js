@@ -3,11 +3,11 @@
 var should = require('chai').should(); // eslint-disable-line
 var Hexo = require('hexo');
 var nunjucks = require('nunjucks');
-var env = new nunjucks.Environment();
 var pathFn = require('path');
 var fs = require('fs');
+var cheerio = require('cheerio');
 
-nunjucks.configure({
+var env = new nunjucks.Environment(null, {
   autoescape: false,
   watch: false
 });
@@ -27,13 +27,15 @@ describe('Sitemap generator', function() {
   var locals;
 
   before(function() {
-    return Post.insert([
-      {source: 'foo', slug: 'foo', updated: 1e8},
-      {source: 'bar', slug: 'bar', updated: 1e8 + 1},
-      {source: 'baz', slug: 'baz', updated: 1e8 - 1}
-    ]).then(function(data) {
-      posts = Post.sort('-updated');
-      locals = hexo.locals.toObject();
+    return hexo.init().then(function() {
+      return Post.insert([
+        {source: 'foo', slug: 'foo', updated: 1e8},
+        {source: 'bar', slug: 'bar', updated: 1e8 + 1},
+        {source: 'baz', slug: 'baz', updated: 1e8 - 1}
+      ]).then(function(data) {
+        posts = Post.sort('-updated');
+        locals = hexo.locals.toObject();
+      });
     });
   });
 
@@ -49,5 +51,35 @@ describe('Sitemap generator', function() {
       config: hexo.config,
       posts: posts.toArray()
     }));
+
+    var $ = cheerio.load(result.data);
+
+    $('urlset').find('url').each(function(i) {
+      $(this).children('loc').text().should.eql(posts.eq(i).permalink);
+      $(this).children('lastmod').text().should.eql(posts.eq(i).updated.toISOString());
+    });
+  });
+
+  describe('skip_render', function() {
+    it('array', function() {
+      hexo.config.skip_render = ['foo'];
+
+      var result = generator(locals);
+      result.data.should.not.contain('foo');
+    });
+
+    it('string', function() {
+      hexo.config.skip_render = 'bar';
+
+      var result = generator(locals);
+      result.data.should.not.contain('bar');
+    });
+
+    it('off', function() {
+      hexo.config.skip_render = null;
+
+      var result = generator(locals);
+      result.should.be.ok;
+    });
   });
 });
