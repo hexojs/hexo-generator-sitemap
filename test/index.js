@@ -2,27 +2,13 @@
 
 var should = require('chai').should(); // eslint-disable-line
 var Hexo = require('hexo');
-var nunjucks = require('nunjucks');
-var pathFn = require('path');
-var fs = require('fs');
 var cheerio = require('cheerio');
-
-var env = new nunjucks.Environment(null, {
-  autoescape: false,
-  watch: false
-});
-
-env.addFilter('uriencode', function(str) {
-  return encodeURI(str);
-});
-
-var sitemapSrc = pathFn.join(__dirname, '../sitemap.xml');
-var sitemapTmpl = nunjucks.compile(fs.readFileSync(sitemapSrc, 'utf8'), env);
 
 describe('Sitemap generator', function() {
   var hexo = new Hexo(__dirname, {silent: true});
   var Post = hexo.model('Post');
   var generator = require('../lib/generator').bind(hexo);
+  var sitemapTmpl = require('../lib/template')();
   var posts;
   var locals;
 
