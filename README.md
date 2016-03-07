@@ -23,3 +23,7 @@ sitemap:
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
+
+## Excluding Posts
+
+Add `sitemap: false` to the post's front matter.
