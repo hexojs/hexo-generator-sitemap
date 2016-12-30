@@ -20,9 +20,11 @@ You can configure this plugin in `_config.yml`.
 ``` yaml
 sitemap:
     path: sitemap.xml
+    template: ./sitemap_template.xml
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
+- **template** - Custom template path. This file will be used to generate sitemap.xml
 
 ## Excluding Posts
 
