@@ -24,7 +24,7 @@ sitemap:
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
-- **template** - Custom template path. This file will be used to generate sitemap.xml
+- **template** - Custom template path. This file will be used to generate sitemap.xml (See [default template](/sitemap.xml))
 
 ## Excluding Posts
 
