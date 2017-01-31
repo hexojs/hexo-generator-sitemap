@@ -6,9 +6,12 @@ var cheerio = require('cheerio');
 
 describe('Sitemap generator', function() {
   var hexo = new Hexo(__dirname, {silent: true});
+  hexo.config.sitemap = {
+    path: 'sitemap.xml'
+  };
   var Post = hexo.model('Post');
   var generator = require('../lib/generator').bind(hexo);
-  var sitemapTmpl = require('../lib/template')();
+  var sitemapTmpl = require('../lib/template')(hexo.config);
   var posts;
   var locals;
 
@@ -26,10 +29,6 @@ describe('Sitemap generator', function() {
   });
 
   it('default', function() {
-    hexo.config.sitemap = {
-      path: 'sitemap.xml'
-    };
-
     var result = generator(locals);
 
     result.path.should.eql('sitemap.xml');
