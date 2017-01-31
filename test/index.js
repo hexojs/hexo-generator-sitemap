@@ -1,7 +1,6 @@
 'use strict';
 
 var should = require('chai').should(); // eslint-disable-line
-var path = require('path');
 var Hexo = require('hexo');
 var cheerio = require('cheerio');
 
