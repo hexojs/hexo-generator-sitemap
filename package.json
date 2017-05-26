@@ -1,6 +1,6 @@
 {
   "name": "hexo-generator-sitemap",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Sitemap generator plugin for Hexo",
   "main": "index",
   "scripts": {
@@ -20,6 +20,9 @@
     "generator"
   ],
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
+  "maintainers": [
+    "Abner Chou <hi@abnerchou.me> (http://abnerchou.me)"
+    ],
   "license": "MIT",
   "dependencies": {
     "minimatch": "^3.0.0",
