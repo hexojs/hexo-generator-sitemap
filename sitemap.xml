@@ -10,4 +10,10 @@
     {% endif %}
   </url>
   {% endfor %}
+  {% for category in categories %}
+  <url>
+    <loc>{{ category.path | uriencode  }}</loc>
+    <lastmod>{{ category.updated.toISOString() }}</lastmod>
+  </url>
+  {% endfor %}
 </urlset>
