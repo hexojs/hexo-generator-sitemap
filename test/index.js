@@ -22,6 +22,14 @@ describe('Sitemap generator', function() {
         {source: 'bar', slug: 'bar', updated: 1e8 + 1},
         {source: 'baz', slug: 'baz', updated: 1e8 - 1}
       ]).then(function(data) {
+        posts = data;
+
+        return posts[0].setCategories(['foo']).then(function() {
+          return posts[1].setCategories(['bar']);
+        }).then(function() {
+          return posts[2].setCategories(['foo']);
+        });
+      }).then(function(data) {
         posts = Post.sort('-updated');
         locals = hexo.locals.toObject();
       });
@@ -43,6 +51,9 @@ describe('Sitemap generator', function() {
       $(this).children('loc').text().should.eql(posts.eq(i).permalink);
       $(this).children('lastmod').text().should.eql(posts.eq(i).updated.toISOString());
     });
+  });
+
+  describe('categories', function() {
   });
 
   describe('skip_render', function() {
