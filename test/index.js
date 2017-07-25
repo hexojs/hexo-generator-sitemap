@@ -42,7 +42,8 @@ describe('Sitemap generator', function() {
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
-      posts: posts.toArray()
+      posts: posts.toArray(),
+      categories: locals.categories.toArray()
     }));
 
     var $ = cheerio.load(result.data);
