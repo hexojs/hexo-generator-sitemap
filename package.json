@@ -36,7 +36,7 @@
     "eslint-config-hexo": "^1.0.2",
     "hexo": "^3.0.0",
     "istanbul": "^0.4.2",
-    "jscs": "^2.9.0",
+    "jscs": "^3.0.7",
     "jscs-preset-hexo": "^1.0.1",
     "mocha": "^2.4.5"
   }
