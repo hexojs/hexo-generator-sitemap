@@ -27,7 +27,7 @@ describe('Sitemap generator', function() {
         return Page.insert([
           {source: 'bio/index.md', path: 'bio/', updated: 1e8 - 3},
           {source: 'about/index.md', path: 'about/', updated: 1e8 - 4}
-        ])
+        ]);
       }).then(() => {
         posts = Post.sort('-updated');
         pages = Page.sort('-update');
@@ -42,12 +42,11 @@ describe('Sitemap generator', function() {
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
-      posts: posts.toArray()
-      .concat(pages.toArray())
+      posts: posts.toArray().concat(pages.toArray())
     }));
 
     const $ = cheerio.load(result.data);
-    const allPosts = Object.assign({}, posts.data.concat(pages.data))
+    const allPosts = Object.assign({}, posts.data.concat(pages.data));
 
     $('url').each((index, element) => {
       $(element).children('loc').text().should.eql(allPosts[index].permalink);
