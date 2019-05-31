@@ -6,7 +6,7 @@
   "scripts": {
     "eslint": "eslint .",
     "test": "mocha test/index.js",
-    "test-cov": "istanbul cover --print both _mocha -- test/index.js"
+    "coverage": "nyc npm run test"
   },
   "directories": {
     "lib": "./lib"
@@ -21,7 +21,7 @@
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
   "maintainers": [
     "Abner Chou <hi@abnerchou.me> (http://abnerchou.me)"
-    ],
+  ],
   "license": "MIT",
   "dependencies": {
     "minimatch": "^3.0.0",
@@ -33,8 +33,8 @@
     "eslint": "^5.10.0",
     "eslint-config-hexo": "^3.0.0",
     "hexo": "^3.0.0",
-    "istanbul": "^0.4.2",
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "nyc": "^14.1.0"
   },
   "engines": {
     "node": ">=6.9.0"
