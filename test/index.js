@@ -36,6 +36,7 @@ describe('Sitemap generator', function() {
     });
   });
 
+  // Check the whole sitemap.xml
   it('default', () => {
     const result = generator(locals);
 
@@ -44,6 +45,11 @@ describe('Sitemap generator', function() {
       config: hexo.config,
       posts: posts.toArray().concat(pages.toArray())
     }));
+  });
+
+  // Check each element in sitemap.xml
+  it('Each element', () => {
+    const result = generator(locals);
 
     const $ = cheerio.load(result.data);
     const allPosts = Object.assign({}, posts.data.concat(pages.data));
@@ -51,6 +57,17 @@ describe('Sitemap generator', function() {
     $('url').each((index, element) => {
       $(element).children('loc').text().should.eql(allPosts[index].permalink);
       $(element).children('lastmod').text().should.eql(allPosts[index].updated.toISOString());
+    });
+  });
+
+  // urls should not ends with 'index.html'
+  it('Canonical url', () => {
+    const result = generator(locals);
+
+    const $ = cheerio.load(result.data);
+
+    $('url').each((index, element) => {
+      $(element).children('loc').text().endsWith('index.html').should.be.false;
     });
   });
 
