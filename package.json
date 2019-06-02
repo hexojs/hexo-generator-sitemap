@@ -11,6 +11,10 @@
   "directories": {
     "lib": "./lib"
   },
+  "files": [
+    "lib",
+    "index.js"
+  ],
   "repository": "hexojs/hexo-generator-sitemap",
   "keywords": [
     "hexo",
