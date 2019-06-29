@@ -1,35 +1,35 @@
 'use strict';
 
-var should = require('chai').should(); // eslint-disable-line
-var Hexo = require('hexo');
-var cheerio = require('cheerio');
+const should = require('chai').should(); // eslint-disable-line
+const Hexo = require('hexo');
+const cheerio = require('cheerio');
 
-describe('Sitemap generator', function() {
-  var hexo = new Hexo(__dirname, {silent: true});
+describe('Sitemap generator', () => {
+  const hexo = new Hexo(__dirname, {silent: true});
   hexo.config.sitemap = {
     path: 'sitemap.xml'
   };
-  var Post = hexo.model('Post');
-  var generator = require('../lib/generator').bind(hexo);
-  var sitemapTmpl = require('../lib/template')(hexo.config);
-  var posts,
-    locals;
+  const Post = hexo.model('Post');
+  const generator = require('../lib/generator').bind(hexo);
+  const sitemapTmpl = require('../lib/template')(hexo.config);
+  let posts = {},
+    locals = {};
 
-  before(function() {
-    return hexo.init().then(function() {
+  before(() => {
+    return hexo.init().then(() => {
       return Post.insert([
         {source: 'foo', slug: 'foo', updated: 1e8},
         {source: 'bar', slug: 'bar', updated: 1e8 + 1},
         {source: 'baz', slug: 'baz', updated: 1e8 - 1}
-      ]).then(function(data) {
+      ]).then(data => {
         posts = Post.sort('-updated');
         locals = hexo.locals.toObject();
       });
     });
   });
 
-  it('default', function() {
-    var result = generator(locals);
+  it('default', () => {
+    const result = generator(locals);
 
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
@@ -37,33 +37,33 @@ describe('Sitemap generator', function() {
       posts: posts.toArray()
     }));
 
-    var $ = cheerio.load(result.data);
+    const $ = cheerio.load(result.data);
 
-    $('urlset').find('url').each(function(i) {
+    $('urlset').find('url').each(i => {
       $(this).children('loc').text().should.eql(posts.eq(i).permalink);
       $(this).children('lastmod').text().should.eql(posts.eq(i).updated.toISOString());
     });
   });
 
-  describe('skip_render', function() {
-    it('array', function() {
+  describe('skip_render', () => {
+    it('array', () => {
       hexo.config.skip_render = ['foo'];
 
-      var result = generator(locals);
+      const result = generator(locals);
       result.data.should.not.contain('foo');
     });
 
-    it('string', function() {
+    it('string', () => {
       hexo.config.skip_render = 'bar';
 
-      var result = generator(locals);
+      const result = generator(locals);
       result.data.should.not.contain('bar');
     });
 
-    it('off', function() {
+    it('off', () => {
       hexo.config.skip_render = null;
 
-      var result = generator(locals);
+      const result = generator(locals);
       result.should.be.ok;
     });
   });
