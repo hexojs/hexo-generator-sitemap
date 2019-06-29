@@ -39,9 +39,9 @@ describe('Sitemap generator', () => {
 
     const $ = cheerio.load(result.data);
 
-    $('urlset').find('url').each(i => {
-      $(this).children('loc').text().should.eql(posts.eq(i).permalink);
-      $(this).children('lastmod').text().should.eql(posts.eq(i).updated.toISOString());
+    $('url').each((index, element) => {
+      $(element).children('loc').text().should.eql(posts.eq(index).permalink);
+      $(element).children('lastmod').text().should.eql(posts.eq(index).updated.toISOString());
     });
   });
 
