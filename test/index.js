@@ -12,8 +12,8 @@ describe('Sitemap generator', () => {
   const Post = hexo.model('Post');
   const generator = require('../lib/generator').bind(hexo);
   const sitemapTmpl = require('../lib/template')(hexo.config);
-  let posts = {},
-    locals = {};
+  let posts = {};
+  let locals = {};
 
   before(() => {
     return hexo.init().then(() => {
