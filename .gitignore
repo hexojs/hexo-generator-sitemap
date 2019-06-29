@@ -4,3 +4,4 @@ tmp/
 *.log
 .idea/
 .nyc_output/
+package-lock.json
