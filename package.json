@@ -26,19 +26,19 @@
   "author": "Tommy Chen <tommy351@gmail.com> (http://zespia.tw)",
   "maintainers": [
     "Abner Chou <hi@abnerchou.me> (http://abnerchou.me)"
-    ],
+  ],
   "license": "MIT",
   "dependencies": {
-    "minimatch": "^3.0.0",
-    "nunjucks": "^3.1.6"
+    "minimatch": "^3.0.4",
+    "nunjucks": "^3.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "cheerio": "^0.22.0",
-    "eslint": "^5.10.0",
+    "eslint": "^5.16.0",
     "eslint-config-hexo": "^3.0.0",
-    "hexo": "^3.0.0",
-    "mocha": "^6.0.2",
-    "nyc": "^14.1.0"
+    "hexo": "^3.9.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
   }
 }
