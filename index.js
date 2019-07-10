@@ -1,9 +1,9 @@
 /* global hexo */
 'use strict';
 
-var pathFn = require('path');
+const pathFn = require('path');
 
-var config = hexo.config.sitemap = Object.assign({
+const config = hexo.config.sitemap = Object.assign({
   path: 'sitemap.xml'
 }, hexo.config.sitemap);
 
