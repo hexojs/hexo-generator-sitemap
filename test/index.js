@@ -3,9 +3,11 @@
 const should = require('chai').should(); // eslint-disable-line
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
+const urlFn = require('url');
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
+  hexo.config.url = 'http://yoursite.com/';
   hexo.config.sitemap = {
     path: 'sitemap.xml'
   };
@@ -34,13 +36,15 @@ describe('Sitemap generator', () => {
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
+      url: hexo.config.url,
       posts: posts.toArray()
     }));
 
     const $ = cheerio.load(result.data);
+    const url = hexo.config.url;
 
     $('url').each((index, element) => {
-      $(element).children('loc').text().should.eql(posts.eq(index).permalink);
+      $(element).children('loc').text().should.eql(url + posts.eq(index).path);
       $(element).children('lastmod').text().should.eql(posts.eq(index).updated.toISOString());
     });
   });
@@ -65,6 +69,18 @@ describe('Sitemap generator', () => {
 
       const result = generator(locals);
       result.should.be.ok;
+    });
+  });
+
+  it('IDN handling', () => {
+    hexo.config.url = 'http://gôg.com/';
+    const hostname = urlFn.parse(hexo.config.url).hostname;
+
+    const result = generator(locals);
+    const $ = cheerio.load(result.data);
+
+    $('url').each((index, element) => {
+      urlFn.parse($(element).children('loc').text()).hostname.should.eql(hostname);
     });
   });
 });
