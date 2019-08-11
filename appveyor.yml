@@ -36,8 +36,8 @@ test_script:
 
 after_test:
   - npm install coveralls
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-
+  - node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info
+  
 # Don't actually build.
 build: off
 
