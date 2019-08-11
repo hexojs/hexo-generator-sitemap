@@ -34,7 +34,7 @@ test_script:
   - npm run eslint
   - npm run test-cov
 
-after_script:
+after_test:
   - npm install coveralls
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 
