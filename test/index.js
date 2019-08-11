@@ -3,6 +3,7 @@
 const should = require('chai').should(); // eslint-disable-line
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
+const urlFn = require('url');
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
@@ -65,6 +66,22 @@ describe('Sitemap generator', () => {
 
       const result = generator(locals);
       result.should.be.ok;
+    });
+  });
+
+  it('IDN handling', () => {
+    hexo.config.url = 'http://fôo.com/bár';
+    const parsedUrl = urlFn.format({
+      protocol: urlFn.parse(hexo.config.url).protocol,
+      hostname: urlFn.parse(hexo.config.url).hostname,
+      pathname: encodeURI(urlFn.parse(hexo.config.url).pathname)
+    });
+
+    const result = generator(locals);
+    const $ = cheerio.load(result.data);
+
+    $('url').each((index, element) => {
+      $(element).children('loc').text().startsWith(parsedUrl).should.be.true;
     });
   });
 });
