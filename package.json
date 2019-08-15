@@ -2,9 +2,9 @@
   "name": "hexo-generator-sitemap",
   "version": "1.2.0",
   "description": "Sitemap generator plugin for Hexo",
-  "main": "index",
+  "main": "lib/index.js",
   "scripts": {
-    "eslint": "eslint .",
+    "eslint": "eslint lib",
     "test": "mocha test/index.js",
     "test-cov": "nyc npm run test"
   },
@@ -13,7 +13,6 @@
   },
   "files": [
     "lib",
-    "index.js",
     "sitemap.xml"
   ],
   "repository": "hexojs/hexo-generator-sitemap",
