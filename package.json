@@ -4,7 +4,9 @@
   "description": "Sitemap generator plugin for Hexo",
   "main": "lib/index.js",
   "scripts": {
-    "eslint": "eslint lib",
+    "eslint": "run-p eslint:*",
+    "eslint:src": "eslint lib",
+    "eslint:test": "eslint test",
     "test": "mocha test/index.js",
     "test-cov": "nyc npm run test"
   },
