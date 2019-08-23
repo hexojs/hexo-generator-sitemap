@@ -3,7 +3,7 @@
 const should = require('chai').should(); // eslint-disable-line
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
-const urlFn = require('url');
+const { format, parse } = require('url');
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
@@ -71,10 +71,10 @@ describe('Sitemap generator', () => {
 
   it('IDN handling', () => {
     hexo.config.url = 'http://fôo.com/bár';
-    const parsedUrl = urlFn.format({
-      protocol: urlFn.parse(hexo.config.url).protocol,
-      hostname: urlFn.parse(hexo.config.url).hostname,
-      pathname: encodeURI(urlFn.parse(hexo.config.url).pathname)
+    const parsedUrl = format({
+      protocol: parse(hexo.config.url).protocol,
+      hostname: parse(hexo.config.url).hostname,
+      pathname: encodeURI(parse(hexo.config.url).pathname)
     });
 
     const result = generator(locals);
