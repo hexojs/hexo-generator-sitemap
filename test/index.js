@@ -22,7 +22,7 @@ describe('Sitemap generator', () => {
         {source: 'bar', slug: 'bar', updated: 1e8 + 1},
         {source: 'baz', slug: 'baz', updated: 1e8 - 1}
       ]).then(data => {
-        posts = Post.sort('-updated');
+        posts = data.sort((a, b) => b.updated - a.updated);
         locals = hexo.locals.toObject();
       });
     });
@@ -34,14 +34,14 @@ describe('Sitemap generator', () => {
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
-      posts: posts.toArray()
+      posts: posts
     }));
 
     const $ = cheerio.load(result.data);
 
     $('url').each((index, element) => {
-      $(element).children('loc').text().should.eql(posts.eq(index).permalink);
-      $(element).children('lastmod').text().should.eql(posts.eq(index).updated.toISOString());
+      $(element).children('loc').text().should.eql(posts[index].permalink);
+      $(element).children('lastmod').text().should.eql(posts[index].updated.toISOString());
     });
   });
 
