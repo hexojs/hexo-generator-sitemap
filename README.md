@@ -23,10 +23,12 @@ You can configure this plugin in `_config.yml`.
 sitemap:
     path: sitemap.xml
     template: ./sitemap_template.xml
+    rel: true
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
 - **template** - Custom template path. This file will be used to generate sitemap.xml (See [default template](/sitemap.xml))
+- **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `true`)
 
 ## Excluding Posts
 
