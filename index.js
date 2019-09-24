@@ -14,6 +14,6 @@ if (!extname(config.path)) {
 
 hexo.extend.generator.register('sitemap', require('./lib/generator'));
 
-if (config.sitemap.rel === true) {
+if (config.rel === true) {
   hexo.extend.filter.register('after_render:html', require('./lib/rel'));
 }
