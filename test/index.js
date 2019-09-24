@@ -71,15 +71,15 @@ describe('Sitemap generator', () => {
 
 describe('Rel-Sitemap', () => {
   const hexo = new Hexo();
-  const autoDiscovery = require('../lib/rel').bind(hexo);
   hexo.config.sitemap = {
     path: 'sitemap.xml',
     rel: true
   };
+  const relSitemap = require('../lib/rel').bind(hexo);
 
   it('default', () => {
     const content = '<head><link></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const $ = cheerio.load(result);
     $('link[rel="sitemap"]').length.should.eql(1);
@@ -91,7 +91,7 @@ describe('Rel-Sitemap', () => {
   it('prepend root', () => {
     hexo.config.root = '/root/';
     const content = '<head><link></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const $ = cheerio.load(result);
     $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.path);
@@ -100,20 +100,20 @@ describe('Rel-Sitemap', () => {
     hexo.config.root = '/';
   });
 
-  it('disable autodiscovery', () => {
-    hexo.config.sitemap.autodiscovery = false;
+  it('disable', () => {
+    hexo.config.sitemap.rel = false;
     const content = '<head><link></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const resultType = typeof result;
     resultType.should.eql('undefined');
-    hexo.config.sitemap.autodiscovery = true;
+    hexo.config.sitemap.rel = true;
   });
 
   it('no duplicate tag', () => {
     const content = '<head><link>'
       + '<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const resultType = typeof result;
     resultType.should.eql('undefined');
@@ -123,7 +123,7 @@ describe('Rel-Sitemap', () => {
     const content = '<head></head>'
       + '<head><link></head>'
       + '<head></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const $ = cheerio.load(result);
     $('link[rel="sitemap"]').length.should.eql(1);
@@ -138,7 +138,7 @@ describe('Rel-Sitemap', () => {
     const content = '<head></head>'
       + '<head><link></head>'
       + '<head><link></head>';
-    const result = autoDiscovery(content);
+    const result = relSitemap(content);
 
     const $ = cheerio.load(result);
     $('link[rel="sitemap"]').length.should.eql(1);
