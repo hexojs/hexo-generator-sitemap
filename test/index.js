@@ -10,9 +10,10 @@ describe('Sitemap generator', () => {
     path: 'sitemap.xml'
   };
   const Post = hexo.model('Post');
+  const Page = hexo.model('Page');
   const generator = require('../lib/generator').bind(hexo);
   const sitemapTmpl = require('../lib/template')(hexo.config);
-  let posts = {};
+  let posts = [];
   let locals = {};
 
   before(() => {
@@ -22,7 +23,15 @@ describe('Sitemap generator', () => {
         {source: 'bar', slug: 'bar', updated: 1e8 + 1},
         {source: 'baz', slug: 'baz', updated: 1e8 - 1}
       ]).then(data => {
-        posts = data.sort((a, b) => b.updated - a.updated);
+        posts = data;
+      }).then(() => {
+        return Page.insert([
+          {source: 'bio/index.md', path: 'bio/', updated: 1e8 - 3},
+          {source: 'about/index.md', path: 'about/', updated: 1e8 - 4}
+        ]);
+      }).then(data => {
+        posts = posts.concat(data);
+        posts = posts.sort((a, b) => b.updated - a.updated);
         locals = hexo.locals.toObject();
       });
     });
