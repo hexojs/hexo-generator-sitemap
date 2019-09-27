@@ -77,3 +77,84 @@ describe('Sitemap generator', () => {
     });
   });
 });
+
+describe('Rel-Sitemap', () => {
+  const hexo = new Hexo();
+  hexo.config.sitemap = {
+    path: 'sitemap.xml',
+    rel: true
+  };
+  const relSitemap = require('../lib/rel').bind(hexo);
+
+  it('default', () => {
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').length.should.eql(1);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.path);
+
+    result.should.eql('<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>');
+  });
+
+  it('prepend root', () => {
+    hexo.config.root = '/root/';
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.path);
+
+    result.should.eql('<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/root/sitemap.xml"></head>');
+    hexo.config.root = '/';
+  });
+
+  it('disable', () => {
+    hexo.config.sitemap.rel = false;
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const resultType = typeof result;
+    resultType.should.eql('undefined');
+    hexo.config.sitemap.rel = true;
+  });
+
+  it('no duplicate tag', () => {
+    const content = '<head><link>'
+      + '<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>';
+    const result = relSitemap(content);
+
+    const resultType = typeof result;
+    resultType.should.eql('undefined');
+  });
+
+  it('ignore empty head tag', () => {
+    const content = '<head></head>'
+      + '<head><link></head>'
+      + '<head></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').length.should.eql(1);
+
+    const expected = '<head></head>'
+    + '<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>'
+    + '<head></head>';
+    result.should.eql(expected);
+  });
+
+  it('apply to first non-empty head tag only', () => {
+    const content = '<head></head>'
+      + '<head><link></head>'
+      + '<head><link></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').length.should.eql(1);
+
+    const expected = '<head></head>'
+    + '<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>'
+    + '<head><link></head>';
+    result.should.eql(expected);
+  });
+});
