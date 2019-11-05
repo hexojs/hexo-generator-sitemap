@@ -3,6 +3,7 @@
 require('chai').should();
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
+const { encodeURL } = require('hexo-util');
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
@@ -156,5 +157,64 @@ describe('Rel-Sitemap', () => {
     + '<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>'
     + '<head><link></head>';
     result.should.eql(expected);
+  });
+});
+
+describe('IDN', () => {
+  it('Default', () => {
+    const hexo = new Hexo(__dirname, {silent: true});
+    hexo.config.sitemap = {
+      path: 'sitemap.xml'
+    };
+    const Post = hexo.model('Post');
+    const generator = require('../lib/generator').bind(hexo);
+
+    hexo.config.url = 'http://fôo.com/bár';
+    const parsedUrl = encodeURL(hexo.config.url);
+
+    return hexo.init().then(() => {
+      return Post.insert({
+        source: 'foo', slug: 'foo', updated: 1e8
+      });
+    }).then(data => {
+      const locals = hexo.locals.toObject();
+
+      const result = generator(locals);
+      const $ = cheerio.load(result.data);
+
+      $('url').each((index, element) => {
+        $(element).children('loc').text().startsWith(parsedUrl).should.be.true;
+      });
+
+      return Post.removeById(data._id);
+    });
+  });
+
+  it('Encoded', () => {
+    const hexo = new Hexo(__dirname, {silent: true});
+    hexo.config.sitemap = {
+      path: 'sitemap.xml'
+    };
+    const Post = hexo.model('Post');
+    const generator = require('../lib/generator').bind(hexo);
+
+    hexo.config.url = 'http://foo.com/b%C3%A1r';
+
+    return hexo.init().then(() => {
+      return Post.insert({
+        source: 'foo', slug: 'foo', updated: 1e8
+      });
+    }).then(data => {
+      const locals = hexo.locals.toObject();
+
+      const result = generator(locals);
+      const $ = cheerio.load(result.data);
+
+      $('url').each((index, element) => {
+        $(element).children('loc').text().startsWith(hexo.config.url).should.be.true;
+      });
+
+      return Post.removeById(data._id);
+    });
   });
 });
