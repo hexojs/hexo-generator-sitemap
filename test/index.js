@@ -79,6 +79,22 @@ describe('Sitemap generator', () => {
   });
 });
 
+it('No posts', () => {
+  const hexo = new Hexo(__dirname, { silent: true });
+  hexo.config.sitemap = {
+    path: 'sitemap.xml'
+  };
+  const Post = hexo.model('Post');
+  const generator = require('../lib/generator').bind(hexo);
+
+  return Post.insert([]).then(data => {
+    const locals = hexo.locals.toObject();
+    const result = typeof generator(locals);
+
+    result.should.eql('undefined');
+  });
+});
+
 describe('Rel-Sitemap', () => {
   const hexo = new Hexo();
   hexo.config.sitemap = {
