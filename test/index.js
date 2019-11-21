@@ -70,6 +70,13 @@ describe('Sitemap generator', () => {
       result.data.should.not.contain('bar');
     });
 
+    it('invalid type', () => {
+      hexo.config.skip_render = { foo: 'bar' };
+
+      const result = generator(locals);
+      result.should.be.ok;
+    });
+
     it('off', () => {
       hexo.config.skip_render = null;
 
