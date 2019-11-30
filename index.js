@@ -3,10 +3,12 @@
 
 const { extname } = require('path');
 
-const config = hexo.config.sitemap = Object.assign({
+hexo.config.sitemap = Object.assign({
   path: 'sitemap.xml',
   rel: false
 }, hexo.config.sitemap);
+
+const config = hexo.config.sitemap;
 
 if (!extname(config.path)) {
   config.path += '.xml';
