@@ -28,25 +28,21 @@ describe('Sitemap generator', () => {
   let posts = [];
   let locals = {};
 
-  before(() => {
-    return hexo.init().then(() => {
-      return Post.insert([
-        {source: 'foo', slug: 'foo', updated: 1e8},
-        {source: 'bar', slug: 'bar', updated: 1e8 + 1},
-        {source: 'baz', slug: 'baz', updated: 1e8 - 1}
-      ]).then(data => {
-        posts = data;
-      }).then(() => {
-        return Page.insert([
-          {source: 'bio/index.md', path: 'bio/', updated: 1e8 - 3},
-          {source: 'about/index.md', path: 'about/', updated: 1e8 - 4}
-        ]);
-      }).then(data => {
-        posts = posts.concat(data);
-        posts = posts.sort((a, b) => b.updated - a.updated);
-        locals = hexo.locals.toObject();
-      });
-    });
+  before(async () => {
+    await hexo.init();
+    let data = await Post.insert([
+      {source: 'foo', slug: 'foo', updated: 1e8},
+      {source: 'bar', slug: 'bar', updated: 1e8 + 1},
+      {source: 'baz', slug: 'baz', updated: 1e8 - 1}
+    ]);
+    posts = data;
+    data = await Page.insert([
+      {source: 'bio/index.md', path: 'bio/', updated: 1e8 - 3},
+      {source: 'about/index.md', path: 'about/', updated: 1e8 - 4}
+    ]);
+    posts = posts.concat(data);
+    posts = posts.sort((a, b) => b.updated - a.updated);
+    locals = hexo.locals.toObject();
   });
 
   it('default', async () => {
@@ -96,7 +92,7 @@ describe('Sitemap generator', () => {
   });
 });
 
-it('No posts', () => {
+it('No posts', async () => {
   const hexo = new Hexo(__dirname, { silent: true });
   hexo.config.sitemap = {
     path: 'sitemap.xml'
@@ -104,12 +100,11 @@ it('No posts', () => {
   const Post = hexo.model('Post');
   const generator = require('../lib/generator').bind(hexo);
 
-  return Post.insert([]).then(data => {
-    const locals = hexo.locals.toObject();
-    const result = typeof generator(locals);
+  await Post.insert([]);
+  const locals = hexo.locals.toObject();
+  const result = typeof generator(locals);
 
-    result.should.eql('undefined');
-  });
+  result.should.eql('undefined');
 });
 
 describe('Rel-Sitemap', () => {
@@ -194,7 +189,7 @@ describe('Rel-Sitemap', () => {
 });
 
 describe('IDN', () => {
-  it('Default', () => {
+  it('Default', async () => {
     const hexo = new Hexo(__dirname, {silent: true});
     hexo.config.sitemap = {
       path: 'sitemap.xml'
@@ -205,25 +200,23 @@ describe('IDN', () => {
     hexo.config.url = 'http://fôo.com/bár';
     const parsedUrl = encodeURL(hexo.config.url);
 
-    return hexo.init().then(() => {
-      return Post.insert({
-        source: 'foo', slug: 'foo', updated: 1e8
-      });
-    }).then(data => {
-      const locals = hexo.locals.toObject();
-
-      const result = generator(locals);
-      const $ = cheerio.load(result.data);
-
-      $('url').each((index, element) => {
-        $(element).children('loc').text().startsWith(parsedUrl).should.be.true;
-      });
-
-      return Post.removeById(data._id);
+    await hexo.init();
+    const data = await Post.insert({
+      source: 'foo', slug: 'foo', updated: 1e8
     });
+    const locals = hexo.locals.toObject();
+
+    const result = generator(locals);
+    const $ = cheerio.load(result.data);
+
+    $('url').each((index, element) => {
+      $(element).children('loc').text().startsWith(parsedUrl).should.be.true;
+    });
+
+    Post.removeById(data._id);
   });
 
-  it('Encoded', () => {
+  it('Encoded', async () => {
     const hexo = new Hexo(__dirname, {silent: true});
     hexo.config.sitemap = {
       path: 'sitemap.xml'
@@ -233,21 +226,19 @@ describe('IDN', () => {
 
     hexo.config.url = 'http://foo.com/b%C3%A1r';
 
-    return hexo.init().then(() => {
-      return Post.insert({
-        source: 'foo', slug: 'foo', updated: 1e8
-      });
-    }).then(data => {
-      const locals = hexo.locals.toObject();
-
-      const result = generator(locals);
-      const $ = cheerio.load(result.data);
-
-      $('url').each((index, element) => {
-        $(element).children('loc').text().startsWith(hexo.config.url).should.be.true;
-      });
-
-      return Post.removeById(data._id);
+    await hexo.init();
+    const data = await Post.insert({
+      source: 'foo', slug: 'foo', updated: 1e8
     });
+    const locals = hexo.locals.toObject();
+
+    const result = generator(locals);
+    const $ = cheerio.load(result.data);
+
+    $('url').each((index, element) => {
+      $(element).children('loc').text().startsWith(hexo.config.url).should.be.true;
+    });
+
+    Post.removeById(data._id);
   });
 });
