@@ -4,6 +4,17 @@ require('chai').should();
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
 const { encodeURL } = require('hexo-util');
+const { transform } = require('camaro');
+
+const p = async xml => {
+  const output = await transform(xml, {
+    items: ['//url', {
+      link: 'loc',
+      date: 'lastmod'
+    }]
+  });
+  return output;
+};
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
@@ -38,7 +49,7 @@ describe('Sitemap generator', () => {
     });
   });
 
-  it('default', () => {
+  it('default', async () => {
     const result = generator(locals);
 
     result.path.should.eql('sitemap.xml');
@@ -47,11 +58,10 @@ describe('Sitemap generator', () => {
       posts: posts
     }));
 
-    const $ = cheerio.load(result.data);
-
-    $('url').each((index, element) => {
-      $(element).children('loc').text().should.eql(posts[index].permalink);
-      $(element).children('lastmod').text().should.eql(posts[index].updated.toISOString());
+    const { items } = await p(result.data);
+    items.forEach((element, index) => {
+      element.link.should.eql(posts[index].permalink);
+      element.date.should.eql(posts[index].updated.toISOString());
     });
   });
 
