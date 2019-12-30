@@ -207,10 +207,9 @@ describe('IDN', () => {
     const locals = hexo.locals.toObject();
 
     const result = generator(locals);
-    const $ = cheerio.load(result.data);
-
-    $('url').each((index, element) => {
-      $(element).children('loc').text().startsWith(parsedUrl).should.be.true;
+    const { items } = await p(result.data);
+    items.forEach(element => {
+      element.link.startsWith(parsedUrl).should.eql(true);
     });
 
     Post.removeById(data._id);
@@ -233,10 +232,9 @@ describe('IDN', () => {
     const locals = hexo.locals.toObject();
 
     const result = generator(locals);
-    const $ = cheerio.load(result.data);
-
-    $('url').each((index, element) => {
-      $(element).children('loc').text().startsWith(hexo.config.url).should.be.true;
+    const { items } = await p(result.data);
+    items.forEach(element => {
+      element.link.startsWith(hexo.config.url).should.eql(true);
     });
 
     Post.removeById(data._id);
