@@ -4,9 +4,9 @@
   <url>
     <loc>{{ post.permalink | uriencode }}</loc>
     {% if post.updated %}
-    <lastmod>{{ post.updated.toISOString() }}</lastmod>
+    <lastmod>{{ post.updated.toISOString().substring(0, 10) }}</lastmod>
     {% elif post.date %}
-    <lastmod>{{ post.date.toISOString() }}</lastmod>
+    <lastmod>{{ post.date.toISOString().substring(0, 10) }}</lastmod>
     {% endif %}
   </url>
   {% endfor %}
