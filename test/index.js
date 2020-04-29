@@ -4,9 +4,10 @@ require('chai').should();
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
 const { encodeURL } = require('hexo-util');
-const { transform } = require('camaro');
+const { ready, transform } = require('camaro');
 
 const p = async xml => {
+  await ready();
   const output = await transform(xml, {
     items: ['//url', {
       link: 'loc',
