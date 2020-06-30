@@ -57,7 +57,7 @@ describe('Sitemap generator', () => {
     const { items } = await p(result.data);
     items.forEach((element, index) => {
       element.link.should.eql(posts[index].permalink);
-      element.date.should.eql(posts[index].updated.toISOString());
+      element.date.should.eql(posts[index].updated.toISOString().substring(0, 10));
     });
   });
 
