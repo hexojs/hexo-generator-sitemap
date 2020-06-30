@@ -3,8 +3,14 @@
 require('chai').should();
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
-const { encodeURL } = require('hexo-util');
+const { deepMerge, encodeURL } = require('hexo-util');
 const { ready, transform } = require('camaro');
+const sitemapCfg = {
+  path: 'sitemap.xml',
+  rel: false,
+  tags: true,
+  categories: true
+};
 
 const p = async xml => {
   await ready();
@@ -19,9 +25,11 @@ const p = async xml => {
 
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
-  hexo.config.sitemap = {
-    path: 'sitemap.xml'
-  };
+  hexo.config.sitemap = sitemapCfg;
+  const defaultCfg = deepMerge(hexo.config, {
+    sitemap: sitemapCfg
+  });
+
   const Post = hexo.model('Post');
   const Page = hexo.model('Page');
   const generator = require('../lib/generator').bind(hexo);
@@ -36,6 +44,8 @@ describe('Sitemap generator', () => {
       {source: 'bar', slug: 'bar', updated: 1e8 + 1},
       {source: 'baz', slug: 'baz', updated: 1e8 - 1}
     ]);
+    await Promise.all(data.map(post => post.setTags(['lorem'])));
+    await Promise.all(data.map(post => post.setCategories(['ipsum'])));
     posts = data;
     data = await Page.insert([
       {source: 'bio/index.md', path: 'bio/', updated: 1e8 - 3},
@@ -46,20 +56,69 @@ describe('Sitemap generator', () => {
     locals = hexo.locals.toObject();
   });
 
+  beforeEach(() => {
+    hexo.config = deepMerge(hexo.config, defaultCfg);
+  });
+
   it('default', async () => {
     const result = generator(locals);
+    const { items } = await p(result.data);
+
+    const { date: sNow } = items.filter(({ link }) => link === 'http://yoursite.com/')[0];
 
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
-      posts: posts
+      posts,
+      sNow,
+      tags: locals.tags.toArray(),
+      categories: locals.categories.toArray()
     }));
 
-    const { items } = await p(result.data);
-    items.forEach((element, index) => {
-      element.link.should.eql(posts[index].permalink);
-      element.date.should.eql(posts[index].updated.toISOString().substring(0, 10));
-    });
+    for (let i = 0; i < posts.length; i++) {
+      items[i].link.should.eql(posts[i].permalink);
+      items[i].date.should.eql(posts[i].updated.toISOString().substring(0, 10));
+    }
+  });
+
+  it('tags', async () => {
+    const { data } = generator(locals);
+    const { items } = await p(data);
+
+    const result = items.filter(({ link }) => link.includes('tags'));
+
+    const check = result.length > 0;
+    check.should.eql(true);
+  });
+
+  it('tags - disable', async () => {
+    hexo.config.sitemap.tags = false;
+    const { data } = generator(locals);
+    const { items } = await p(data);
+
+    const result = items.filter(({ link }) => link.includes('tags'));
+
+    result.length.should.eql(0);
+  });
+
+  it('categories', async () => {
+    const { data } = generator(locals);
+    const { items } = await p(data);
+
+    const result = items.filter(({ link }) => link.includes('categories'));
+
+    const check = result.length > 0;
+    check.should.eql(true);
+  });
+
+  it('categories - disable', async () => {
+    hexo.config.sitemap.categories = false;
+    const { data } = generator(locals);
+    const { items } = await p(data);
+
+    const result = items.filter(({ link }) => link.includes('categories'));
+
+    result.length.should.eql(0);
   });
 
   describe('skip_render', () => {
