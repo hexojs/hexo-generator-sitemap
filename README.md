@@ -22,15 +22,23 @@ You can configure this plugin in `_config.yml`.
 
 ``` yaml
 sitemap:
-    path: sitemap.xml
-    template: ./sitemap_template.xml
-    rel: false
+  path: sitemap.xml
+  template: ./sitemap_template.xml
+  rel: false
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
 - **template** - Custom template path. This file will be used to generate sitemap.xml (See [default template](/sitemap.xml))
 - **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `false`)
 
-## Excluding Posts
+## Exclude Posts/Pages
 
-Add `sitemap: false` to the post's front matter.
+Add `sitemap: false` to the post/page's front matter.
+
+``` yml
+---
+title: lorem ipsum
+date: 2020-01-02
+sitemap: false
+---
+```
