@@ -64,13 +64,11 @@ describe('Sitemap generator', () => {
     const result = generator(locals);
     const { items } = await p(result.data);
 
-    const { date: sNow } = items.filter(({ link }) => link === 'http://yoursite.com/')[0];
-
     result.path.should.eql('sitemap.xml');
     result.data.should.eql(sitemapTmpl.render({
       config: hexo.config,
       posts,
-      sNow,
+      sNow: new Date(),
       tags: locals.tags.toArray(),
       categories: locals.categories.toArray()
     }));
