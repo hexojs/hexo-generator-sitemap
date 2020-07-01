@@ -10,4 +10,29 @@
     {% endif %}
   </url>
   {% endfor %}
+
+  <url>
+    <loc>{{ config.url | uriencode }}</loc>
+    <lastmod>{{ sNow | formatDate }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  {% for tag in tags %}
+  <url>
+    <loc>{{ tag.permalink | uriencode }}</loc>
+    <lastmod>{{ sNow | formatDate }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  {% endfor %}
+
+  {% for cat in categories %}
+  <url>
+    <loc>{{ cat.permalink | uriencode }}</loc>
+    <lastmod>{{ sNow | formatDate }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  {% endfor %}
 </urlset>
