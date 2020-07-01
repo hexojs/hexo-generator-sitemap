@@ -11,15 +11,13 @@
   </url>
   {% endfor %}
 
-  {# home page #}
   <url>
     <loc>{{ config.url | uriencode }}</loc>
     <lastmod>{{ sNow | formatDate }}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-   </url>
+  </url>
 
-  {# tag pages #}
   {% for tag in tags %}
   <url>
     <loc>{{ tag.permalink | uriencode }}</loc>
@@ -29,7 +27,6 @@
   </url>
   {% endfor %}
 
-  {# categories pages #}
   {% for cat in categories %}
   <url>
     <loc>{{ cat.permalink | uriencode }}</loc>
@@ -38,5 +35,4 @@
     <priority>0.6</priority>
   </url>
   {% endfor %}
-
 </urlset>
