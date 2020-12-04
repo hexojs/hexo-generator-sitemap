@@ -1,6 +1,6 @@
 # hexo-generator-sitemap
 
-[![Build Status](https://travis-ci.org/hexojs/hexo-generator-sitemap.svg?branch=master)](https://travis-ci.org/hexojs/hexo-generator-sitemap)
+[![Build Status](https://github.com/hexojs/hexo-generator-sitemap/workflows/Tester/badge.svg)](https://github.com/hexojs/hexo-generator-sitemap/actions?query=workflow%3ATester)
 [![NPM version](https://badge.fury.io/js/hexo-generator-sitemap.svg)](https://www.npmjs.com/package/hexo-generator-sitemap)
 [![Coverage Status](https://img.shields.io/coveralls/hexojs/hexo-generator-sitemap.svg)](https://coveralls.io/r/hexojs/hexo-generator-sitemap?branch=master)
 
