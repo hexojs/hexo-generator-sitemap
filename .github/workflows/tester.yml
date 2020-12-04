@@ -49,7 +49,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Coverage
-        run: nyc --reporter=lcov npm run test
+        run: npm run test-cov
         env:
           CI: true
       - name: Coveralls
