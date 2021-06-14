@@ -8,6 +8,8 @@
     {% elif post.date %}
     <lastmod>{{ post.date | formatDate }}</lastmod>
     {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   {% endfor %}
 
@@ -22,8 +24,8 @@
   <url>
     <loc>{{ tag.permalink | uriencode }}</loc>
     <lastmod>{{ sNow | formatDate }}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
   </url>
   {% endfor %}
 
@@ -31,8 +33,8 @@
   <url>
     <loc>{{ cat.permalink | uriencode }}</loc>
     <lastmod>{{ sNow | formatDate }}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
   </url>
   {% endfor %}
 </urlset>
