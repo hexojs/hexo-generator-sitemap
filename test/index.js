@@ -4,7 +4,7 @@ require('chai').should();
 const Hexo = require('hexo');
 const cheerio = require('cheerio');
 const { deepMerge, encodeURL } = require('hexo-util');
-const { ready, transform } = require('camaro');
+const { transform } = require('camaro');
 const sitemapCfg = {
   path: 'sitemap.xml',
   rel: false,
@@ -13,7 +13,6 @@ const sitemapCfg = {
 };
 
 const p = async xml => {
-  await ready();
   const output = await transform(xml, {
     items: ['//url', {
       link: 'loc',
