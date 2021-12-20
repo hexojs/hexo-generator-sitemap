@@ -5,11 +5,7 @@
   {% for post in posts %}
   <url>
     <loc>{{ post.permalink | uriencode }}</loc>
-    {% if post.updated %}
-    <lastmod>{{ post.updated | formatDate }}</lastmod>
-    {% elif post.date %}
-    <lastmod>{{ post.date | formatDate }}</lastmod>
-    {% endif %}
+    <lastmod>{% if post.updated %}{{ post.updated | formatDate }}{% elif post.date %}{{ post.date | formatDate }}{% endif %}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
