@@ -2,14 +2,12 @@
 'use strict';
 
 const { extname } = require('path');
+const defaultConfig = require('./lib/config');
+hexo.config.sitemap = Object.assign(defaultConfig, hexo.config.sitemap);
 
-hexo.config.sitemap = Object.assign({
-  path: 'sitemap.xml',
-  rel: false,
-  tags: true,
-  categories: true
-}, hexo.config.sitemap);
-
+/**
+ * @type {import('./lib/config')['sitemap']}
+ */
 const config = hexo.config.sitemap;
 
 if (!extname(config.path)) {
