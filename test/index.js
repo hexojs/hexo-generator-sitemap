@@ -189,7 +189,9 @@ describe('Sitemap generator', () => {
 
   it('Sitemap-TXT', () => {
     const result = generator(locals).txt;
-    const items = result.data.split('\r\n');
+    const reg = new RegExp('\\r\\n|\\r|\\n', 'g');
+    let items = result.data.replace(reg, '\n');
+    items = items.split('\n');
     result.path.should.eql('sitemap.txt');
     for (let i = 0; i < posts.length; i++) {
       items[i].should.eql(posts[i].permalink);
