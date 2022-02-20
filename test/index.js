@@ -32,8 +32,6 @@ describe('Sitemap generator', () => {
 
   const Post = hexo.model('Post');
   const Page = hexo.model('Page');
-  // const generator = require('../lib/generator').bind(hexo);
-  // const sitemapTmpl = require('../lib/template')(hexo.config);
   const templ = require('../lib/template')(hexo.config);
   const generator = function(locals) {
     const res = require('../lib/generator').bind(hexo)(locals);
@@ -302,7 +300,6 @@ describe('IDN', () => {
       path: 'sitemap.xml'
     };
     const Post = hexo.model('Post');
-    // const generator = require('../lib/generator').bind(hexo);
     const generator = function(locals) {
       const res = require('../lib/generator').bind(hexo)(locals);
       const data = {};
@@ -342,7 +339,6 @@ describe('IDN', () => {
       path: 'sitemap.xml'
     };
     const Post = hexo.model('Post');
-    // const generator = require('../lib/generator').bind(hexo);
     const generator = function(locals) {
       const res = require('../lib/generator').bind(hexo)(locals);
       const data = {};

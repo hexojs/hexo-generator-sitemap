@@ -22,15 +22,19 @@ You can configure this plugin in `_config.yml`.
 
 ``` yaml
 sitemap:
-  path: sitemap.xml
+  path: 
+    - sitemap.xml
+    - sitemap.txt
   template: ./sitemap_template.xml
+  template_txt: ./sitemap_template.txt
   rel: false
   tags: true
   categories: true
 ```
 
 - **path** - Sitemap path. (Default: sitemap.xml)
-- **template** - Custom template path. This file will be used to generate sitemap.xml (See [default template](/sitemap.xml))
+- **template** - Custom template path. This file will be used to generate sitemap.xml (See [default xml template](/sitemap.xml))
+- **template_txt** - Custom template path. This file will be used to generate sitemap.txt (See [default txt template](/sitemap.txt))
 - **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `false`)
 - **tags** - Add site's tags
 - **categories** - Add site's categories
