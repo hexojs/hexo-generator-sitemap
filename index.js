@@ -4,7 +4,7 @@
 const { extname } = require('path');
 
 hexo.config.sitemap = Object.assign({
-  path: 'sitemap.xml',
+  path: ['sitemap.xml', 'sitemap.txt'],
   rel: false,
   tags: true,
   categories: true
@@ -12,7 +12,7 @@ hexo.config.sitemap = Object.assign({
 
 const config = hexo.config.sitemap;
 
-if (!extname(config.path)) {
+if (typeof config.path === 'string' && !extname(config.path)) {
   config.path += '.xml';
 }
 
