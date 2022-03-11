@@ -14,7 +14,8 @@
   "files": [
     "lib",
     "index.js",
-    "sitemap.xml"
+    "sitemap.xml",
+    "sitemap.txt"
   ],
   "repository": "hexojs/hexo-generator-sitemap",
   "keywords": [
