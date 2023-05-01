@@ -22,22 +22,72 @@ You can configure this plugin in `_config.yml`.
 
 ``` yaml
 sitemap:
-  path: 
+  enable: true
+  path:
     - sitemap.xml
     - sitemap.txt
-  template: ./sitemap_template.xml
-  template_txt: ./sitemap_template.txt
   rel: false
   tags: true
   categories: true
 ```
 
-- **path** - Sitemap path. (Default: sitemap.xml)
-- **template** - Custom template path. This file will be used to generate sitemap.xml (See [default xml template](/sitemap.xml))
-- **template_txt** - Custom template path. This file will be used to generate sitemap.txt (See [default txt template](/sitemap.txt))
+- **enable** - Controls whether this plugin runs. (Default: `true`)
+- **path** - Sitemap path. (Default: ['sitemap.xml', 'sitemap.txt'])
+- **template** - Custom template path. This file will be used to generate sitemap file. Set empty to use internal template. (See [#Template](#Template) for more)
+- **tags** - Add site's tags (Default: `true`)
+- **categories** - Add site's categories (Default: `true`)
 - **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `false`)
-- **tags** - Add site's tags
-- **categories** - Add site's categories
+
+### Template
+
+#### Internal Template
+
+This plugin has two internal templates.
+
+- [./sitemap.xml](./sitemap.xml)
+- [./sitemap.txt](./sitemap.txt)
+
+Set `template` empty to use internal template.
+It according the extension of `path` to choose `template`.
+
+```yaml
+sitemap:
+  path:
+    - sitemap.xml
+    - sitemap.txt
+```
+
+or
+
+```yaml
+sitemap:
+  path:
+    - sitemap.xml
+    - sitemap.txt
+  template:
+    - ''
+    - ''
+```
+
+#### Custom Template
+
+you can generate several files by custom template.
+
+`path` and `template` are paired in order.
+if `template` is empty, plugin will try to use [internal template](#Internal-Template)
+
+```yaml
+sitemap:
+  path:
+    - sitemap.xml
+    - custom1.txt
+    - custom2.json
+    - custom file name.txt  # use intelnal template
+  template:
+    - ''  # use intelnal template
+    - './your custom1.template'
+    - './your custom2.template'
+```
 
 ## Exclude Posts/Pages
 
