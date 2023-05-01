@@ -215,10 +215,11 @@ it('No posts', async () => {
 describe('Rel-Sitemap', () => {
   const hexo = new Hexo();
   hexo.config.sitemap = {
-    path: 'sitemap.xml',
+    path: ['sitemap.xml', 'sitemap.txt'],
     rel: true
   };
   const relSitemap = require('../lib/rel').bind(hexo);
+  const relPath = hexo.config.sitemap.path.filter(p => { return extname(p) === '.xml'; })[0];
 
   it('default', () => {
     const content = '<head><link></head>';
@@ -226,7 +227,7 @@ describe('Rel-Sitemap', () => {
 
     const $ = cheerio.load(result);
     $('link[rel="sitemap"]').length.should.eql(1);
-    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.path);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + relPath);
 
     result.should.eql('<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>');
   });
@@ -237,7 +238,7 @@ describe('Rel-Sitemap', () => {
     const result = relSitemap(content);
 
     const $ = cheerio.load(result);
-    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.path);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + relPath);
 
     result.should.eql('<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/root/sitemap.xml"></head>');
     hexo.config.root = '/';
@@ -290,6 +291,42 @@ describe('Rel-Sitemap', () => {
     + '<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head>'
     + '<head><link></head>';
     result.should.eql(expected);
+  });
+
+  it('specify relPath', () => {
+    hexo.config.sitemap.relPath = 'sitemap_specify.xml';
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').length.should.eql(1);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + hexo.config.sitemap.relPath);
+
+    result.should.eql('<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap_specify.xml"></head>');
+    hexo.config.sitemap.relPath = null;
+  });
+
+  it('multiple xml', () => {
+    hexo.config.sitemap.path = ['sitemap2.xml', 'sitemap.xml', 'sitemap.txt'];
+    const relPath = hexo.config.sitemap.path.filter(p => { return extname(p) === '.xml'; })[0];
+
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const $ = cheerio.load(result);
+    $('link[rel="sitemap"]').length.should.eql(1);
+    $('link[rel="sitemap"]').attr('href').should.eql(hexo.config.root + relPath);
+
+    result.should.eql(`<head><link><link rel="sitemap" type="application/xml" title="Sitemap" href="/${relPath}"></head>`);
+  });
+
+  it('no xml', () => {
+    hexo.config.sitemap.path = ['sitemap2.txt', 'sitemap.txt'];
+    const content = '<head><link></head>';
+    const result = relSitemap(content);
+
+    const resultType = typeof result;
+    resultType.should.eql('undefined');
   });
 });
 
