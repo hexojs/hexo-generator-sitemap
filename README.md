@@ -22,7 +22,7 @@ You can configure this plugin in `_config.yml`.
 
 ``` yaml
 sitemap:
-  path: 
+  path:
     - sitemap.xml
     - sitemap.txt
   template: ./sitemap_template.xml
@@ -35,9 +35,10 @@ sitemap:
 - **path** - Sitemap path. (Default: sitemap.xml)
 - **template** - Custom template path. This file will be used to generate sitemap.xml (See [default xml template](/sitemap.xml))
 - **template_txt** - Custom template path. This file will be used to generate sitemap.txt (See [default txt template](/sitemap.txt))
-- **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `false`)
 - **tags** - Add site's tags
 - **categories** - Add site's categories
+- **rel** - Add [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) to the site's header. (Default: `false`)
+- **relPath** - (optional) Specify [`rel-sitemap`](http://microformats.org/wiki/rel-sitemap) path. Unset it to ues the first `.xml` file in `path`.
 
 ## Exclude Posts/Pages
 
