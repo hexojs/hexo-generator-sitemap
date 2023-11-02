@@ -1,9 +1,10 @@
 /* global hexo */
 'use strict';
 
-const { extname } = require('path');
+const { log } = hexo;
 
 hexo.config.sitemap = Object.assign({
+  enable: true,
   path: ['sitemap.xml', 'sitemap.txt'],
   rel: false,
   tags: true,
@@ -12,8 +13,13 @@ hexo.config.sitemap = Object.assign({
 
 const config = hexo.config.sitemap;
 
-if (typeof config.path === 'string' && !extname(config.path)) {
-  config.path += '.xml';
+if (!config.enable) {
+  return;
+}
+
+if (!config.path) {
+  log.warn('hexo-generator-sitemap: `path` can\'t not be empty. ');
+  return;
 }
 
 hexo.extend.generator.register('sitemap', require('./lib/generator'));

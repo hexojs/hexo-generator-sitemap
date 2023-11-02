@@ -5,8 +5,9 @@ const Hexo = require('hexo');
 const cheerio = require('cheerio');
 const { deepMerge, encodeURL } = require('hexo-util');
 const { transform } = require('camaro');
-const { extname } = require('path');
+const { join } = require('path');
 const sitemapCfg = {
+  enable: true,
   path: ['sitemap.xml', 'sitemap.txt'],
   rel: false,
   tags: true,
@@ -23,6 +24,16 @@ const p = async xml => {
   return output;
 };
 
+const generatorFilter = (path, result) => {
+  let r;
+  result.forEach(res => {
+    if (res.path === path) {
+      r = res;
+    }
+  });
+  return r;
+};
+
 describe('Sitemap generator', () => {
   const hexo = new Hexo(__dirname, {silent: true});
   hexo.config.sitemap = sitemapCfg;
@@ -32,37 +43,9 @@ describe('Sitemap generator', () => {
 
   const Post = hexo.model('Post');
   const Page = hexo.model('Page');
-  const templ = require('../lib/template')(hexo.config);
-  const generator = function(locals) {
-    const res = require('../lib/generator').bind(hexo)(locals);
-    const data = {};
-    for (const r of res) {
-      switch (extname(r.path)) {
-        case '.xml':
-          data.xml = r;
-          break;
-        case '.txt':
-          data.txt = r;
-          break;
-      }
-    }
-    return data;
-  };
-  const sitemapTmpl = (function(templ) {
-    const data = {};
-    for (const r of templ) {
-      switch (extname(r.path)) {
-        case '.xml':
-          data.xml = r.data;
-          break;
-        case '.txt':
-          data.txt = r.data;
-          break;
-      }
-    }
-    return data;
-  }(templ));
-
+  const generator = require('../lib/generator').bind(hexo);
+  const sitemapTmpl = require('../lib/template');
+  const parseConfigFn = require('../lib/parse_config');
   let posts = [];
   let locals = {};
 
@@ -90,18 +73,28 @@ describe('Sitemap generator', () => {
   });
 
   it('default', async () => {
-    const result = generator(locals).xml;
-    const { items } = await p(result.data);
+    const result = generator(locals);
+    const sitemapCfg_parse = parseConfigFn(hexo.config.sitemap);
 
-    result.path.should.eql('sitemap.xml');
-    result.data.should.eql(sitemapTmpl.xml.render({
-      config: hexo.config,
-      posts,
-      sNow: new Date(),
-      tags: locals.tags.toArray(),
-      categories: locals.categories.toArray()
-    }));
+    const templateLength = sitemapCfg_parse.template.filter(item => {
+      return item !== null && typeof item !== 'undefined' && item !== '';
+    }).length;
 
+    result.length.should.eql(templateLength);
+
+    result.forEach(res => {
+      const i = result.indexOf(res);
+      res.path.should.eql(sitemapCfg_parse.path[i]);
+      res.data.should.eql(sitemapTmpl(sitemapCfg_parse.template[i]).render({
+        config: hexo.config,
+        posts,
+        sNow: new Date(),
+        tags: locals.tags.toArray(),
+        categories: locals.categories.toArray()
+      }));
+    });
+
+    const { items } = await p(generatorFilter('sitemap.xml', result).data);
     for (let i = 0; i < posts.length; i++) {
       items[i].link.should.eql(posts[i].permalink);
       items[i].date.should.eql(posts[i].updated.toISOString().substring(0, 10));
@@ -109,7 +102,7 @@ describe('Sitemap generator', () => {
   });
 
   it('tags', async () => {
-    const { data } = generator(locals).xml;
+    const { data } = generatorFilter('sitemap.xml', generator(locals));
     const { items } = await p(data);
 
     const result = items.filter(({ link }) => link.includes('tags'));
@@ -120,7 +113,7 @@ describe('Sitemap generator', () => {
 
   it('tags - disable', async () => {
     hexo.config.sitemap.tags = false;
-    const { data } = generator(locals).xml;
+    const { data } = generatorFilter('sitemap.xml', generator(locals));
     const { items } = await p(data);
 
     const result = items.filter(({ link }) => link.includes('tags'));
@@ -129,7 +122,7 @@ describe('Sitemap generator', () => {
   });
 
   it('categories', async () => {
-    const { data } = generator(locals).xml;
+    const { data } = generatorFilter('sitemap.xml', generator(locals));
     const { items } = await p(data);
 
     const result = items.filter(({ link }) => link.includes('categories'));
@@ -140,7 +133,7 @@ describe('Sitemap generator', () => {
 
   it('categories - disable', async () => {
     hexo.config.sitemap.categories = false;
-    const { data } = generator(locals).xml;
+    const { data } = generatorFilter('sitemap.xml', generator(locals));
     const { items } = await p(data);
 
     const result = items.filter(({ link }) => link.includes('categories'));
@@ -148,45 +141,8 @@ describe('Sitemap generator', () => {
     result.length.should.eql(0);
   });
 
-  describe('skip_render', () => {
-    it('array', () => {
-      hexo.config.skip_render = ['foo'];
-
-      const result = generator(locals).xml;
-      result.data.should.not.contain('foo');
-    });
-
-    it('string', () => {
-      hexo.config.skip_render = 'bar';
-
-      const result = generator(locals).xml;
-      result.data.should.not.contain('bar');
-    });
-
-    it('string - off', () => { // coverage branch 100%
-      hexo.config.skip_render = '';
-
-      const result = generator(locals).xml;
-      result.should.be.ok;
-    });
-
-    it('invalid type', () => {
-      hexo.config.skip_render = { foo: 'bar' };
-
-      const result = generator(locals).xml;
-      result.should.be.ok;
-    });
-
-    it('off', () => {
-      hexo.config.skip_render = null;
-
-      const result = generator(locals).xml;
-      result.should.be.ok;
-    });
-  });
-
-  it('Sitemap-TXT', () => {
-    const result = generator(locals).txt;
+  it('Sitemap - TXT', () => {
+    const result = generatorFilter('sitemap.txt', generator(locals));
     const reg = new RegExp('\\r\\n|\\r|\\n', 'g');
     let items = result.data.replace(reg, '\n');
     items = items.split('\n');
@@ -194,6 +150,80 @@ describe('Sitemap generator', () => {
     for (let i = 0; i < posts.length; i++) {
       items[i].should.eql(posts[i].permalink);
     }
+  });
+
+  it('template - custom', () => {
+    hexo.config.sitemap.path = 'custom.json';
+    hexo.config.sitemap.template = join(__dirname, './custom.template');
+
+    const result = generator(locals);
+    result.length.should.eql(1);
+  });
+
+  it('template - Not all templates specified', () => {
+    hexo.config.sitemap.path = ['custom.json', 'sitemap.xml', 'sitemap.txt'];
+    hexo.config.sitemap.template = [join(__dirname, './custom.template'), ''];
+
+    const { data } = generatorFilter('custom.json', generator(locals));
+    const result = data.includes('For test only');
+    result.should.eql(true);
+  });
+
+  it('template - skip invalid template', () => {
+    hexo.config.sitemap.path = ['custom.json', 'sitemap.xml'];
+    hexo.config.sitemap.template = [''];
+
+    const sitemapCfg_parse = parseConfigFn(hexo.config.sitemap);
+
+    const result = generator(locals);
+    result.forEach(res => {
+      res.path.should.not.eql(sitemapCfg_parse.path[0]);
+    });
+  });
+
+  describe('skip_render', () => {
+    before(() => {
+      hexo.config.sitemap = sitemapCfg;
+    });
+
+    it('array', () => {
+      hexo.config.skip_render = ['foo'];
+
+      const result = generator(locals);
+      result.forEach(res => {
+        res.data.should.not.contain('foo');
+      });
+    });
+
+    it('string', () => {
+      hexo.config.skip_render = 'bar';
+
+      const result = generator(locals);
+      result.forEach(res => {
+        res.data.should.not.contain('bar');
+      });
+    });
+
+    it('string - off', () => { // coverage branch 100%
+      hexo.config.skip_render = '';
+
+      const result = generatorFilter('sitemap.xml', generator(locals));
+      result.should.be.ok;
+    });
+
+    it('invalid type', () => {
+      hexo.config.skip_render = { foo: 'bar' };
+
+      const result = generator(locals);
+      result.should.be.ok;
+    });
+
+    it('off', () => {
+      hexo.config.skip_render = null;
+
+      const result = generator(locals);
+      result.should.be.ok;
+    });
   });
 });
 
@@ -300,21 +330,8 @@ describe('IDN', () => {
       path: 'sitemap.xml'
     };
     const Post = hexo.model('Post');
-    const generator = function(locals) {
-      const res = require('../lib/generator').bind(hexo)(locals);
-      const data = {};
-      for (const r of res) {
-        switch (extname(r.path)) {
-          case '.xml':
-            data.xml = r;
-            break;
-          case '.txt':
-            data.txt = r;
-            break;
-        }
-      }
-      return data;
-    };
+    const generator = require('../lib/generator').bind(hexo);
+
     hexo.config.url = 'http://fôo.com/bár';
     const parsedUrl = encodeURL(hexo.config.url);
 
@@ -324,8 +341,8 @@ describe('IDN', () => {
     });
     const locals = hexo.locals.toObject();
 
-    const result = generator(locals).xml;
-    const { items } = await p(result.data);
+    const result = generator(locals);
+    const { items } = await p(generatorFilter('sitemap.xml', result).data);
     items.forEach(element => {
       element.link.startsWith(parsedUrl).should.eql(true);
     });
@@ -339,21 +356,8 @@ describe('IDN', () => {
       path: 'sitemap.xml'
     };
     const Post = hexo.model('Post');
-    const generator = function(locals) {
-      const res = require('../lib/generator').bind(hexo)(locals);
-      const data = {};
-      for (const r of res) {
-        switch (extname(r.path)) {
-          case '.xml':
-            data.xml = r;
-            break;
-          case '.txt':
-            data.txt = r;
-            break;
-        }
-      }
-      return data;
-    };
+    const generator = require('../lib/generator').bind(hexo);
+
     hexo.config.url = 'http://foo.com/b%C3%A1r';
 
     await hexo.init();
@@ -362,8 +366,8 @@ describe('IDN', () => {
     });
     const locals = hexo.locals.toObject();
 
-    const result = generator(locals).xml;
-    const { items } = await p(result.data);
+    const result = generator(locals);
+    const { items } = await p(generatorFilter('sitemap.xml', result).data);
     items.forEach(element => {
       element.link.startsWith(hexo.config.url).should.eql(true);
     });
